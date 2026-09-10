@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Accounting Account Trainer</title>
+<style>
+  :root {
+    --bg: #151b2f;
+    --panel: #202941;
+    --panel-soft: #293552;
+    --border: #3a4a70;
+    --text: #f5f7ff;
+    --muted: #bec8de;
+    --accent: #9db0ff;
+    --good: #93e8c3;
+    --bad: #ffaaaa;
+    --glow-1: rgba(157,176,255,.16);
+    --glow-2: rgba(147,232,195,.10);
+    --shadow: rgba(0,0,0,.22);
+    --feedback-bg: rgba(18,24,40,.58);
+  }
+
+  body.light {
+    --bg: #eef3fb;
+    --panel: #ffffff;
+    --panel-soft: #f5f7fc;
+    --border: #cfd8ea;
+    --text: #182033;
+    --muted: #66738d;
+    --accent: #526ed3;
+    --good: #2f9f74;
+    --bad: #c95151;
+    --glow-1: rgba(82,110,211,.10);
+    --glow-2: rgba(47,159,116,.07);
+    --shadow: rgba(37,49,82,.12);
+    --feedback-bg: #f7f9fd;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    background:
+      radial-gradient(circle at 20% 15%, var(--glow-1), transparent 32%),
+      radial-gradient(circle at 80% 80%, var(--glow-2), transparent 30%),
+      var(--bg);
+    color: var(--text);
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+
+  .app {
+    width: min(760px, 100%);
+  }
+
+  .title {
+    margin: 0 0 14px;
+    text-align: center;
+    font-size: clamp(24px, 4vw, 34px);
+    letter-spacing: -.03em;
+  }
+
+  .quiz-box {
+    background: linear-gradient(180deg, rgba(255,255,255,.025), rgba(255,255,255,.008)), var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: clamp(22px, 5vw, 36px);
+    box-shadow: 0 22px 60px var(--shadow);
+    user-select: none;
+    transition: border-color .15s ease, transform .15s ease;
+  }
+
+  .quiz-box.ready-next {
+    cursor: pointer;
+  }
+
+  .quiz-box.ready-next:hover {
+    border-color: rgba(138,164,255,.65);
+  }
+
+  .meta {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    color: var(--muted);
+    font-size: 13px;
+    margin-bottom: 26px;
+  }
+
+  .kind {
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .12em;
+  }
+
+  .account {
+    text-align: center;
+    font-size: clamp(32px, 7vw, 54px);
+    line-height: 1.05;
+    font-weight: 900;
+    letter-spacing: -.04em;
+    margin: 8px 0 10px;
+  }
+
+  .prompt {
+    text-align: center;
+    color: var(--muted);
+    font-size: 16px;
+    line-height: 1.45;
+    margin-bottom: 26px;
+  }
+
+  .answers {
+    display: grid;
+    gap: 11px;
+  }
+
+  .answer {
+    width: 100%;
+    border: 1px solid var(--border);
+    background: var(--panel-soft);
+    color: var(--text);
+    padding: 15px 16px;
+    border-radius: 14px;
+    font: inherit;
+    font-weight: 750;
+    text-align: left;
+    cursor: pointer;
+    transition: transform .12s ease, border-color .12s ease, background .12s ease;
+  }
+
+  .answer:hover {
+    transform: translateY(-1px);
+    border-color: rgba(138,164,255,.65);
+  }
+
+  .answer.correct {
+    border-color: rgba(134,230,189,.75);
+    background: rgba(134,230,189,.12);
+  }
+
+  .answer.wrong {
+    border-color: rgba(255,154,154,.78);
+    background: rgba(255,154,154,.11);
+  }
+
+  .answer.locked {
+    cursor: default;
+  }
+
+  .answer.locked:hover {
+    transform: none;
+  }
+
+  .feedback {
+    display: none;
+    margin-top: 20px;
+    padding: 16px 17px;
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    background: var(--feedback-bg);
+    line-height: 1.5;
+  }
+
+  .feedback.show { display: block; }
+  .feedback.good { border-color: rgba(134,230,189,.55); }
+  .feedback.bad { border-color: rgba(255,154,154,.55); }
+
+  .feedback-title {
+    font-weight: 900;
+    margin-bottom: 5px;
+  }
+
+  .feedback-text {
+    color: #dbe4fa;
+  }
+
+  .continue {
+    display: none;
+    text-align: center;
+    color: var(--accent);
+    font-weight: 800;
+    font-size: 13px;
+    margin-top: 16px;
+  }
+
+  .continue.show { display: block; }
+
+  .hint {
+    text-align: center;
+    margin-top: 14px;
+    color: var(--muted);
+    font-size: 12px;
+  }
+
+  .topbar {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 10px;
+  }
+
+  .theme-toggle {
+    border: 1px solid var(--border);
+    background: var(--panel);
+    color: var(--text);
+    border-radius: 999px;
+    padding: 8px 12px;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: border-color .15s ease, transform .15s ease, background .15s ease;
+  }
+
+  .theme-toggle:hover {
+    transform: translateY(-1px);
+    border-color: var(--accent);
+  }
+
+  @media (max-width: 520px) {
+    body { padding: 14px; }
+    .quiz-box { border-radius: 19px; }
+    .meta { margin-bottom: 20px; }
+  }
+</style>
+</head>
+<body>
+  <main class="app">
+    <div class="topbar">
+      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle light and dark mode">Light mode</button>
+    </div>
+    <h1 class="title">Accounting Account Trainer</h1>
+
+    <section class="quiz-box" id="quizBox" aria-live="polite">
+      <div class="meta">
+        <span class="kind" id="kindLabel"></span>
+        <span id="questionNumber"></span>
+      </div>
+
+      <div class="account" id="accountName"></div>
+      <div class="prompt" id="prompt"></div>
+
+      <div class="answers" id="answers"></div>
+
+      <div class="feedback" id="feedback">
+        <div class="feedback-title" id="feedbackTitle"></div>
+        <div class="feedback-text" id="feedbackText"></div>
+      </div>
+
+      <div class="continue" id="continueText">Click anywhere in this box for the next question</div>
+    </section>
+
+    <div class="hint">Each question randomly asks for account type, financial statement, or normal balance.</div>
+  </main>
+
+<script>
+const ACCOUNTS = [
+  {name:"Cash", type:"Asset", statement:"Balance Sheet", normal:"Debit",
+   note:"Cash is an asset because it is a resource owned by the business."},
+  {name:"Accounts Payable", type:"Liability", statement:"Balance Sheet", normal:"Credit",
+   note:"Accounts Payable is a liability because it is money the business owes to creditors."},
+  {name:"Accounts Receivable", type:"Asset", statement:"Balance Sheet", normal:"Debit",
+   note:"Accounts Receivable is an asset because customers owe the business money."},
+  {name:"Common Stock", type:"Equity", statement:"Statement of Stockholders' Equity & Balance Sheet", normal:"Credit",
+   note:"Common Stock represents owners' investment and increases stockholders' equity."},
+  {name:"Rent Revenue", type:"Revenue", statement:"Income Statement", normal:"Credit",
+   note:"Rent Revenue is revenue earned by the business and is reported on the Income Statement."},
+  {name:"Wages Expense", type:"Expense", statement:"Income Statement", normal:"Debit",
+   note:"Wages Expense is a cost of operating the business, so it is an expense."},
+  {name:"Supplies", type:"Asset", statement:"Balance Sheet", normal:"Debit",
+   note:"Unused supplies are resources the business still owns, so Supplies is an asset."},
+  {name:"Land", type:"Asset", statement:"Balance Sheet", normal:"Debit",
+   note:"Land is a long-term resource owned by the business, so it is an asset."},
+  {name:"Prepaid Insurance", type:"Asset", statement:"Balance Sheet", normal:"Debit",
+   note:"Prepaid Insurance is an asset because the business paid now for insurance coverage it will receive in the future."},
+  {name:"Supplies Expense", type:"Expense", statement:"Income Statement", normal:"Debit",
+   note:"Supplies Expense records supplies that have been used up during the period."},
+  {name:"Equipment", type:"Asset", statement:"Balance Sheet", normal:"Debit",
+   note:"Equipment is a resource owned and used by the business, so it is an asset."},
+  {name:"Dividends", type:"Equity", statement:"Statement of Stockholders' Equity", normal:"Debit",
+   note:"Dividends are equity-related but reduce retained earnings, so their normal balance is Debit."},
+  {name:"Unearned Rent", type:"Liability", statement:"Balance Sheet", normal:"Credit",
+   note:"Unearned Rent is a liability because cash was received before the rent revenue was earned."},
+  {name:"Fees Earned", type:"Revenue", statement:"Income Statement", normal:"Credit",
+   note:"Fees Earned is revenue from services the business has already provided."},
+  {name:"Utilities Expense", type:"Expense", statement:"Income Statement", normal:"Debit",
+   note:"Utilities Expense is a cost incurred while operating the business."},
+  {name:"Rent Expense", type:"Expense", statement:"Income Statement", normal:"Debit",
+   note:"Rent Expense is the cost of using rented property or equipment during the period."},
+  {name:"Interest Receivable", type:"Asset", statement:"Balance Sheet", normal:"Debit",
+   note:"Interest Receivable is an asset because another party owes the business interest money."},
+  {name:"Miscellaneous Expense", type:"Expense", statement:"Income Statement", normal:"Debit",
+   note:"Miscellaneous Expense records minor operating costs that do not need a separate expense account."},
+  {name:"Buildings", type:"Asset", statement:"Balance Sheet", normal:"Debit",
+   note:"Buildings are long-term resources owned by the business, so they are assets."},
+  {name:"Prepaid Rent", type:"Asset", statement:"Balance Sheet", normal:"Debit",
+   note:"Prepaid Rent is an asset because rent was paid before the future rental benefit is used."},
+  {name:"Retained Earnings", type:"Equity", statement:"Statement of Stockholders' Equity & Balance Sheet", normal:"Credit",
+   note:"Retained Earnings is accumulated equity from profits kept in the business."},
+  {name:"Insurance Expense", type:"Expense", statement:"Income Statement", normal:"Debit",
+   note:"Insurance Expense is the cost of insurance coverage that has been used during the period."},
+  {name:"Wages Payable", type:"Liability", statement:"Balance Sheet", normal:"Credit",
+   note:"Wages Payable is a liability because the business owes wages that have not yet been paid."}
+];
+
+const TYPE_CHOICES = ["Asset", "Liability", "Equity", "Revenue", "Expense"];
+const STATEMENT_CHOICES = [
+  "Balance Sheet",
+  "Income Statement",
+  "Statement of Stockholders' Equity",
+  "Statement of Stockholders' Equity & Balance Sheet"
+];
+const NORMAL_CHOICES = ["Debit", "Credit"];
+
+const KINDS = ["type", "statement", "normal"];
+
+const labels = {
+  type: "Account Type",
+  statement: "Financial Statement",
+  normal: "Normal Balance"
+};
+
+const prompts = {
+  type: "What type of account is this?",
+  statement: "Which financial statement(s) include this account?",
+  normal: "What is this account's normal balance?"
+};
+
+const quizBox = document.getElementById("quizBox");
+const kindLabel = document.getElementById("kindLabel");
+const questionNumber = document.getElementById("questionNumber");
+const accountName = document.getElementById("accountName");
+const prompt = document.getElementById("prompt");
+const answers = document.getElementById("answers");
+const feedback = document.getElementById("feedback");
+const feedbackTitle = document.getElementById("feedbackTitle");
+const feedbackText = document.getElementById("feedbackText");
+const continueText = document.getElementById("continueText");
+
+let current = null;
+let kind = null;
+let answered = false;
+let qNum = 0;
+let lastAccount = null;
+let lastKind = null;
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function chooseDifferent(arr, previous) {
+  const pool = arr.length > 1 ? arr.filter(x => x !== previous) : arr;
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+
+function newQuestion() {
+  answered = false;
+  qNum++;
+
+  const accountPool = ACCOUNTS.filter(a => a.name !== lastAccount);
+  current = accountPool[Math.floor(Math.random() * accountPool.length)];
+  kind = chooseDifferent(KINDS, lastKind);
+
+  lastAccount = current.name;
+  lastKind = kind;
+
+  kindLabel.textContent = labels[kind];
+  questionNumber.textContent = `Question ${qNum}`;
+  accountName.textContent = current.name;
+  prompt.textContent = prompts[kind];
+
+  feedback.className = "feedback";
+  feedbackTitle.textContent = "";
+  feedbackText.textContent = "";
+  continueText.className = "continue";
+  quizBox.classList.remove("ready-next");
+
+  let choices =
+    kind === "type" ? TYPE_CHOICES :
+    kind === "statement" ? STATEMENT_CHOICES :
+    NORMAL_CHOICES;
+
+  renderAnswers(shuffle(choices));
+}
+
+function renderAnswers(choices) {
+  answers.innerHTML = "";
+
+  choices.forEach(choice => {
+    const button = document.createElement("button");
+    button.className = "answer";
+    button.type = "button";
+    button.dataset.choice = choice;
+    button.textContent = choice;
+    button.addEventListener("click", (event) => {
+      event.stopPropagation();
+      if (!answered) checkAnswer(choice);
+    });
+    answers.appendChild(button);
+  });
+}
+
+function correctAnswer() {
+  return current[kind];
+}
+
+function explanationFor(kind, account) {
+  if (kind === "type") {
+    return `${account.note} Therefore, its account type is ${account.type}.`;
+  }
+
+  if (kind === "statement") {
+    if (account.statement === "Balance Sheet") {
+      return `${account.type}s are reported on the Balance Sheet, so ${account.name} appears there.`;
+    }
+    if (account.statement === "Income Statement") {
+      return `${account.type}s are reported on the Income Statement, so ${account.name} appears there.`;
+    }
+    if (account.statement === "Statement of Stockholders' Equity") {
+      return `${account.name} directly affects stockholders' equity and appears on the Statement of Stockholders' Equity.`;
+    }
+    return `${account.name} is shown in the Statement of Stockholders' Equity and its ending balance is also reported on the Balance Sheet.`;
+  }
+
+  if (account.name === "Dividends") {
+    return `Dividends reduce stockholders' equity. In DEALER, Dividends are on the debit side, so the normal balance is Debit.`;
+  }
+
+  if (["Asset", "Expense"].includes(account.type)) {
+    return `${account.type}s increase with debits, so ${account.name} has a normal Debit balance.`;
+  }
+
+  return `${account.type}s increase with credits, so ${account.name} has a normal Credit balance.`;
+}
+
+function checkAnswer(selected) {
+  answered = true;
+  const correct = correctAnswer();
+  const isCorrect = selected === correct;
+
+  document.querySelectorAll(".answer").forEach(button => {
+    button.classList.add("locked");
+    if (button.dataset.choice === correct) button.classList.add("correct");
+    if (button.dataset.choice === selected && selected !== correct) button.classList.add("wrong");
+  });
+
+  feedbackTitle.textContent = isCorrect ? "Correct" : `Correct answer: ${correct}`;
+  feedbackText.textContent = explanationFor(kind, current);
+  feedback.className = `feedback show ${isCorrect ? "good" : "bad"}`;
+
+  continueText.className = "continue show";
+  quizBox.classList.add("ready-next");
+}
+
+quizBox.addEventListener("click", () => {
+  if (answered) newQuestion();
+});
+
+const themeToggle = document.getElementById("themeToggle");
+
+function applyTheme(theme) {
+  const isLight = theme === "light";
+  document.body.classList.toggle("light", isLight);
+  themeToggle.textContent = isLight ? "Dark mode" : "Light mode";
+  localStorage.setItem("accountTrainerTheme", theme);
+}
+
+themeToggle.addEventListener("click", (event) => {
+  event.stopPropagation();
+  const nextTheme = document.body.classList.contains("light") ? "dark" : "light";
+  applyTheme(nextTheme);
+});
+
+applyTheme(localStorage.getItem("accountTrainerTheme") || "dark");
+newQuestion();
+</script>
+</body>
+</html>
