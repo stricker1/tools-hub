@@ -1,7 +1,18 @@
 {
   "name": "tools-hub",
+  "main": "./src/index.js",
   "compatibility_date": "2026-09-09",
+
   "assets": {
-    "directory": "./public"
-  }
+    "directory": "./public",
+    "binding": "ASSETS",
+    "run_worker_first": ["/class-scheduler*"]
+  },
+
+  "services": [
+    {
+      "binding": "CLASS_SCHEDULER",
+      "service": "class-scheduler"
+    }
+  ]
 }
