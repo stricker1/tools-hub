@@ -1,0 +1,30 @@
+Salamander Grand Piano V3
+Author: Alexander Holm
+License: Creative Commons Attribution 3.0 Unported (CC BY 3.0)
+License text: https://creativecommons.org/licenses/by/3.0/legalcode
+Original source: https://archive.org/details/SalamanderGrandPianoV3
+Instrument description: https://freepats.zenvoid.org/Piano/acoustic-grand-piano.html
+
+These are recordings of a Yamaha C5 acoustic grand piano, not synthesized tones.
+
+MP3 source: @audio-samples/piano-mp3-velocity8, version 1.0.5
+https://github.com/darosh/samples-piano-mp3
+https://registry.npmjs.org/@audio-samples/piano-mp3-velocity8/-/piano-mp3-velocity8-1.0.5.tgz
+MP3 packaging/conversion by Jan Forst. The package README explicitly licenses
+its sound samples under CC BY 3.0; its MIT package license is not a replacement
+for the samples' Creative Commons license. No package software is bundled here.
+
+Changes for Perfect Pitch:
+Selected 29 velocity-8 recordings (C1 through C8 in minor thirds); resampled to
+44.1 kHz stereo; removed leading near-silence with a short attack margin;
+corrected estimated pitch toward equal temperament (A4 = 440 Hz) to remove
+the original piano's stretched tuning; balanced register levels with bounded
+attack-level normalization; trimmed each to two seconds with a
+100 ms end fade; joined in 2.1-second slots;
+re-encoded as one MP3 bank for efficient loading. Browser playback transposes
+the nearest recording by at most one semitone, with gain and release envelopes.
+No endorsement by the original creators is implied.
+
+The tuning report is piano-tuning.json. Low notes use the second partial as a
+pitch reference because their fundamental is weak. Real string resonances and
+small changes in pitch during each recorded decay are intentionally retained.

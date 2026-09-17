@@ -1,3 +1,4 @@
+import { pianoSample } from "../public/perfect-pitch/piano.mjs";
 import test from "node:test";
 import assert from "node:assert/strict";
 import {
@@ -260,4 +261,17 @@ test("white-key setting filters note modes across ranges without changing harmon
     ),
   );
   assert.equal(all.size, 12);
+});
+
+test("piano samples cover every playable MIDI note with at most one semitone of transposition", () => {
+  for (let midi = 24; midi <= 107; midi++) {
+    const sample = pianoSample(midi);
+    assert.ok(Math.abs(midi - sample.root) <= 1);
+    assert.ok(sample.offset >= 0 && sample.offset <= 58.8 + 1e-9);
+    assert.ok(
+      Math.abs(frequency(sample.root) * sample.rate - frequency(midi)) < 1e-10,
+    );
+    assert.ok(sample.offset + 1.23 * sample.rate < sample.offset + 2.1);
+  }
+  assert.deepEqual(pianoSample(69), { root: 69, offset: 31.5, rate: 1 });
 });
