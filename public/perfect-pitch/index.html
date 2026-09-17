@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f6f5ed" />
+    <meta
+      name="description"
+      content="A little playground for a very good ear. Test pitch, speed, intervals, and chords in seven musical game modes."
+    />
+    <title>Perfect Pitch · little tools</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23dce7b7'/%3E%3Ctext x='15' y='47' font-size='44'%3E♪%3C/text%3E%3C/svg%3E"
+    />
+    <link rel="stylesheet" href="./style.css" />
+    <script type="module" src="./app.mjs"></script>
+  </head>
+  <body>
+    <div class="shell">
+      <header class="topbar">
+        <a href="/" class="hub-link">← <span>little tools</span></a>
+        <a href="./" class="wordmark"
+          ><span class="brand-icon" aria-hidden="true">♮</span> perfect pitch</a
+        >
+        <span class="tuning">A4 / 440 Hz</span>
+      </header>
+      <nav class="tabs" aria-label="Perfect Pitch screens">
+        <button type="button" data-screen="play" aria-current="page">
+          Play
+        </button>
+        <button type="button" data-screen="stats">Statistics</button>
+        <button type="button" data-screen="settings">Settings</button>
+      </nav>
+      <p id="storage-notice" class="notice" role="status" hidden>
+        Saving is unavailable in this browser. You can still play; this
+        session’s progress will stay here until you leave.
+      </p>
+      <main>
+        <section id="play-screen" aria-label="Play">
+          <div id="lobby">
+            <div class="hero">
+              <div class="eyebrow">A LITTLE PLAYGROUND FOR A VERY GOOD EAR</div>
+              <h1>Sounds familiar?</h1>
+              <p>Trust your ears. Chase a streak. Find your edge.</p>
+              <div class="sound-art" aria-hidden="true">
+                <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i
+                ><i></i><i></i><i></i><i></i>
+              </div>
+            </div>
+            <div class="section-heading">
+              <h2>Pick your play</h2>
+              <span>7 ways to tune in</span>
+            </div>
+            <div
+              id="mode-grid"
+              class="mode-grid"
+              role="group"
+              aria-label="Game mode"
+            ></div>
+            <div class="launch-panel">
+              <div class="launch-controls">
+                <label for="difficulty">Difficulty</label>
+                <select id="difficulty">
+                  <option value="easy">Easy · C4–B5</option>
+                  <option value="normal">Normal · C3–B5</option>
+                  <option value="hard">Hard · C1–B7</option>
+                  <option value="chaos">Chaos · C1–B7 + random timbre</option>
+                  <option value="custom">Custom range</option>
+                </select>
+                <p id="setup-description" class="small"></p>
+              </div>
+              <button id="start" class="primary start-button" type="button">
+                Let’s play <span aria-hidden="true">→</span>
+              </button>
+            </div>
+            <p id="start-error" class="error" role="alert" hidden></p>
+            <p class="lobby-foot">
+              Made for recognition, not memorization. Your ear, your pace.
+            </p>
+          </div>
+          <div id="game" hidden>
+            <div class="game-heading">
+              <div>
+                <span class="eyebrow" id="game-context"></span>
+                <h1 id="game-title">Single note</h1>
+              </div>
+              <button id="finish" class="quiet" type="button">End run</button>
+            </div>
+            <div class="metrics" aria-label="Current run statistics">
+              <div><span>Score</span><strong id="score">0</strong></div>
+              <div><span>Accuracy</span><strong id="accuracy">—</strong></div>
+              <div><span>Streak</span><strong id="streak">0</strong></div>
+              <div id="time-metric">
+                <span id="time-label">Avg. time</span
+                ><strong id="time-value">—</strong>
+              </div>
+            </div>
+            <div id="timer-track" class="timer-track" hidden>
+              <div id="timer-fill"></div>
+            </div>
+            <div class="arena" id="arena">
+              <div class="arena-top">
+                <span id="question-number" class="pill">NOTE 01</span
+                ><span id="best-label" class="small">Best streak 0</span>
+              </div>
+              <div class="listening-mark" aria-hidden="true">
+                <span></span><span></span><span></span><span></span
+                ><span></span>
+              </div>
+              <div class="prompt-wrap" aria-live="polite" aria-atomic="true">
+                <h2 id="prompt">What’s the note?</h2>
+                <p id="feedback">Listen. Trust your first instinct.</p>
+              </div>
+              <div class="transport">
+                <button id="replay" class="secondary" type="button">
+                  ↻ Replay</button
+                ><button id="next" class="primary" type="button" hidden>
+                  Next sound →
+                </button>
+              </div>
+            </div>
+            <div id="octave-area" class="answer-section" hidden>
+              <div class="section-heading">
+                <h2>Pick the octave</h2>
+                <span>C4 = middle C</span>
+              </div>
+              <div
+                id="octaves"
+                class="octaves"
+                role="group"
+                aria-label="Answer octave"
+              ></div>
+            </div>
+            <div id="pitch-area" class="answer-section">
+              <div class="section-heading">
+                <h2 id="pitch-heading">Name that note</h2>
+                <span id="selection-hint"></span>
+              </div>
+              <div
+                id="pitch-buttons"
+                class="pitch-grid"
+                role="group"
+                aria-label="Pitch class answer"
+              ></div>
+            </div>
+            <div id="choice-area" class="answer-section" hidden>
+              <div class="section-heading">
+                <h2 id="choice-heading">Name the interval</h2>
+              </div>
+              <div
+                id="choice-buttons"
+                class="choice-grid"
+                role="group"
+                aria-label="Musical answer"
+              ></div>
+            </div>
+            <p id="keyboard-help" class="keyboard-help">
+              Keyboard: A W S E D F T G Y H U J · Space to replay · Enter for
+              next
+            </p>
+            <p id="game-error" class="error" role="alert" hidden></p>
+          </div>
+          <section
+            id="summary"
+            class="summary"
+            hidden
+            aria-labelledby="summary-title"
+          >
+            <div class="eyebrow" id="summary-eyebrow">RUN COMPLETE</div>
+            <div class="summary-art" aria-hidden="true">✦</div>
+            <h1 id="summary-title" tabindex="-1">Nice listening.</h1>
+            <p id="summary-detail"></p>
+            <div class="metrics" id="summary-metrics"></div>
+            <p id="summary-best" class="record"></p>
+            <div class="summary-actions">
+              <button id="again" class="primary" type="button">
+                Play again →</button
+              ><button id="choose-mode" class="secondary" type="button">
+                Choose a mode
+              </button>
+            </div>
+          </section>
+        </section>
+        <section id="settings-screen" hidden aria-labelledby="settings-title">
+          <div class="page-heading">
+            <div class="eyebrow">MAKE IT YOURS</div>
+            <h1 id="settings-title">Your sound, your rules.</h1>
+            <p>Settings are saved on this device.</p>
+          </div>
+          <form id="settings-form" class="settings-panel">
+            <fieldset>
+              <legend>The sound</legend>
+              <label class="field"
+                >Timbre<select name="timbre" id="timbre">
+                  <option value="sine">Pure sine</option>
+                  <option value="piano">Piano-like</option>
+                  <option value="organ">Organ</option>
+                  <option value="soft">Soft synth</option>
+                  <option value="bright">Bright synth</option>
+                </select></label
+              >
+              <label class="toggle"
+                ><span
+                  >Mix it up<small
+                    >A random timbre each question. Always on in Chaos.</small
+                  ></span
+                ><input type="checkbox" name="randomTimbre"
+              /></label>
+              <label class="field"
+                >Volume <output id="volume-label">45%</output
+                ><input type="range" name="volume" min="0" max="1" step="0.01"
+              /></label>
+              <button id="preview-sound" type="button" class="secondary">
+                ♪ Try sound · A4
+              </button>
+              <p id="preview-error" class="error" role="alert" hidden></p>
+            </fieldset>
+            <fieldset>
+              <legend>The challenge</legend>
+              <div class="range-pair">
+                <label class="field"
+                  >Lowest octave<select id="low" name="low"></select></label
+                ><label class="field"
+                  >Highest octave<select id="high" name="high"></select
+                ></label>
+              </div>
+              <p class="small">
+                Full octaves, C through B. All played notes stay in range.
+                Intervals and chords need at least two octaves.
+              </p>
+              <label class="field"
+                >Interval direction<select name="direction">
+                  <option value="both">Ascending + descending</option>
+                  <option value="ascending">Ascending only</option>
+                  <option value="descending">Descending only</option>
+                </select></label
+              >
+            </fieldset>
+            <fieldset>
+              <legend>The feel</legend>
+              <label class="field"
+                >Note names<select name="spelling">
+                  <option value="both">Both · C♯/D♭</option>
+                  <option value="sharps">Sharps · C♯</option>
+                  <option value="flats">Flats · D♭</option>
+                </select></label
+              >
+              <label class="toggle"
+                ><span
+                  >Keep the notes coming<small
+                    >Automatically play the next question.</small
+                  ></span
+                ><input type="checkbox" name="auto"
+              /></label>
+              <label class="toggle"
+                ><span
+                  >Show response times<small
+                    >See timing feedback while you play.</small
+                  ></span
+                ><input type="checkbox" name="showTime"
+              /></label>
+            </fieldset>
+          </form>
+          <p class="small settings-foot">
+            Equal temperament · A4 = 440 Hz · No accounts, uploads, or audio
+            downloads.
+          </p>
+        </section>
+        <section id="stats-screen" hidden aria-labelledby="stats-title">
+          <div class="page-heading">
+            <div class="eyebrow">THE SHAPE OF YOUR EAR</div>
+            <h1 id="stats-title">Every note adds up.</h1>
+            <p>Your lifetime stats on this device, across all modes.</p>
+          </div>
+          <div id="stats-content"></div>
+          <div class="stats-footer">
+            <p class="small">
+              Pitch stats use single, exact, speed, and streak answers. Register
+              uses the first note or chord root. Replay time counts toward your
+              response time.
+            </p>
+            <button type="button" id="reset-stats" class="danger">
+              Reset statistics
+            </button>
+          </div>
+        </section>
+      </main>
+      <footer class="footer">
+        <span>perfect pitch</span><span>a little tool for a good ear</span>
+      </footer>
+    </div>
+    <dialog id="reset-dialog" aria-labelledby="reset-title">
+      <h2 id="reset-title">A clean slate?</h2>
+      <p>
+        This clears your saved statistics and records on this device. Your
+        settings stay the same.
+      </p>
+      <form method="dialog">
+        <button value="cancel" class="secondary" autofocus>Keep my stats</button
+        ><button value="reset" class="danger">Reset everything</button>
+      </form>
+    </dialog>
+    <noscript
+      ><p class="notice">
+        Enable JavaScript to play Perfect Pitch. All audio and statistics run in
+        your browser.
+      </p></noscript
+    >
+  </body>
+</html>
