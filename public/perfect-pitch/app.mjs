@@ -1,5 +1,7 @@
 import {
   SHARPS,
+  WHITE_KEYS,
+  usesWhiteKeys,
   TIMBRES,
   INTERVALS,
   CHORDS,
@@ -114,7 +116,7 @@ function updateSetup() {
   $("difficulty").value = settings.difficulty;
   const random = settings.randomTimbre || settings.difficulty === "chaos";
   $("setup-description").textContent =
-    `C${settings.low}–B${settings.high} · ${random ? "Random timbre" : TIMBRES[settings.timbre]} · ${settings.auto ? "Auto advance" : "Tap for next"}`;
+    `C${settings.low}–B${settings.high} · ${random ? "Random timbre" : TIMBRES[settings.timbre]} · ${usesWhiteKeys(mode, settings) ? "White keys only" : "All notes"} · ${settings.auto ? "Auto advance" : "Tap for next"}`;
 }
 $("difficulty").addEventListener("change", (e) => {
   settings.difficulty = e.target.value;
@@ -223,7 +225,7 @@ async function start() {
     document.body.dataset.gameMode = mode;
     $("game-title").textContent = MODES[mode][0];
     $("game-context").textContent =
-      `${settings.difficulty.toUpperCase()} / C${settings.low}–B${settings.high}`;
+      `${settings.difficulty.toUpperCase()} / C${settings.low}–B${settings.high}${usesWhiteKeys(mode, settings) ? " / WHITE KEYS" : ""}`;
     $("timer-track").hidden = mode !== "speed";
     error("start-error");
     error("game-error");
@@ -261,7 +263,10 @@ function buildAnswers() {
     mode === "root" ? "Pick the root" : "Name that note";
   $("choice-heading").textContent =
     mode === "interval" ? "Name the interval" : "Pick the chord quality";
+  const whiteKeysOnly = usesWhiteKeys(mode, settings);
+  $("pitch-buttons").classList.toggle("white-keys", whiteKeysOnly);
   for (let pc = 0; pc < 12; pc++) {
+    if (whiteKeysOnly && !WHITE_KEYS.includes(pc)) continue;
     const b = answerButton(pitchName(pc, settings.spelling), "pc", pc);
     b.classList.toggle("accidental", SHARPS[pc].includes("♯"));
     b.classList.toggle("both", settings.spelling === "both");
@@ -293,7 +298,7 @@ function buildAnswers() {
   $("keyboard-help").textContent =
     mode === "interval" || mode === "chord"
       ? "Keyboard: Tab + Enter to answer · Space to replay · Enter for next"
-      : `Keyboard: A W S E D F T G Y H U J${mode === "exact" ? " · 1–7 for octave" : ""} · Space to replay`;
+      : `Keyboard: ${whiteKeysOnly ? "A S D F G H J" : "A W S E D F T G Y H U J"}${mode === "exact" ? " · 1–7 for octave" : ""} · Space to replay`;
 }
 function answerButton(label, part, value) {
   const b = node("button", "answer", label);
@@ -420,6 +425,12 @@ function choose(part, value) {
     finish("time");
     return;
   }
+  if (
+    part === "pc" &&
+    usesWhiteKeys(mode, settings) &&
+    !WHITE_KEYS.includes(value)
+  )
+    return;
   selection[part] = value;
   document
     .querySelectorAll("#game .answer")
