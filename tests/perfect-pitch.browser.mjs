@@ -273,6 +273,7 @@ try {
       s.master = ctx.createGain();
       s.master.gain.value = 0.32;
       s.master.connect(ctx.destination);
+      if (timbre === "piano") await s.piano.prepare(ctx);
       s.tone(69, timbre, 0.05, 0.75, 1);
       const buffer = await ctx.startRendering(),
         samples = buffer.getChannelData(0);
@@ -302,7 +303,7 @@ try {
   assert.ok(Math.abs(rendered[0].hz - 440) < 3);
   assert.equal(new Set(rendered.map((r) => r.rms.toFixed(5))).size, 5);
   console.log(
-    "PASS: five real OfflineAudioContext renders; finite, unclipped, distinct envelopes; A4 sine at 440 Hz",
+    "PASS: five OfflineAudioContext renders including real piano samples; finite, unclipped, distinct envelopes; A4 sine at 440 Hz",
   );
   const whites = await newPage({ viewport: { width: 320, height: 740 } });
   await whites.locator('[data-screen="settings"]').click();
@@ -357,6 +358,112 @@ try {
     "PASS: white-key toggle persists, filters four note modes and keyboard input, fits 320px, and restores black keys",
   );
   await whites.context().close();
+  const sampledPitches = await audio.evaluate(async () => {
+    const { Sound } = await import("./audio.mjs");
+    const results = [];
+    for (const midi of [24, 69, 70, 107]) {
+      const ctx = new OfflineAudioContext(1, 48000 * 2, 48000),
+        s = new Sound();
+      s.context = ctx;
+      s.master = ctx.createGain();
+      s.master.gain.value = 0.32;
+      s.master.connect(ctx.destination);
+      await s.piano.prepare(ctx);
+      s.tone(midi, "piano", 0.05, 0.75, 1);
+      const buffer = await ctx.startRendering(),
+        a = buffer.getChannelData(0);
+      const harmonic = midi < 60 ? 2 : 1,
+        expected = 440 * 2 ** ((midi - 69) / 12) * harmonic;
+      let best = 0,
+        measured = 0;
+      // Compare spectral energy around the requested pitch (including the top register).
+      for (let step = -60; step <= 60; step++) {
+        const hz = expected * (1 + step / 1000),
+          coefficient = 2 * Math.cos((2 * Math.PI * hz) / 48000);
+        let p = 0,
+          pp = 0;
+        for (let i = 7200; i < 28800; i++) {
+          const v =
+            a[i] * (0.5 - 0.5 * Math.cos((2 * Math.PI * (i - 7200)) / 21600)) +
+            coefficient * p -
+            pp;
+          pp = p;
+          p = v;
+        }
+        const energy = p * p + pp * pp - coefficient * p * pp;
+        if (energy > best) {
+          best = energy;
+          measured = hz;
+        }
+      }
+      results.push({
+        midi,
+        cents: 1200 * Math.log2(measured / expected),
+        peak: Math.max(...a.map(Math.abs)),
+        tail: a.slice(60000).every((v) => Math.abs(v) < 1e-7),
+      });
+    }
+    return results;
+  });
+  for (const r of sampledPitches) {
+    assert.ok(Math.abs(r.cents) < 10, JSON.stringify(r));
+    assert.ok(r.peak > 0 && r.peak < 1);
+    assert.ok(r.tail);
+  }
+  console.log(
+    "PASS: recorded low/A4/transposed/high notes render within 10 cents of target with silent release tails",
+  );
+  const pianoPage = await newPage();
+  await pianoPage.locator('[data-screen="settings"]').click();
+  await pianoPage.locator('[name="timbre"]').selectOption("piano");
+  await pianoPage.locator("#preview-sound").click();
+  await pianoPage.waitForFunction(
+    () => !document.querySelector("#preview-sound").disabled,
+  );
+  assert.equal(await pianoPage.locator("#preview-error").isVisible(), false);
+  await pianoPage.locator('[data-screen="play"]').click();
+  await startMode(pianoPage, "single");
+  // No network is available after the bank is prepared: replay and next still work.
+  await pianoPage.context().setOffline(true);
+  await pianoPage.locator("#replay").click();
+  let pianoQuestion = makeQuestion(
+    "single",
+    { ...settings, timbre: "piano" },
+    null,
+    () => 0.41,
+  );
+  await correctAnswer(pianoPage, "single", pianoQuestion);
+  await pianoPage.locator("#next").click();
+  await pianoPage.waitForFunction(
+    () => !document.querySelector("#replay").disabled,
+  );
+  pianoQuestion = makeQuestion(
+    "single",
+    { ...settings, timbre: "piano" },
+    pianoQuestion,
+    () => 0.41,
+  );
+  await correctAnswer(pianoPage, "single", pianoQuestion);
+  assert.equal(await pianoPage.locator("#game-error").isVisible(), false);
+  await pianoPage.context().close();
+  const missingPiano = await browser.newPage();
+  missingPiano.on("pageerror", (e) => errors.push(e.message));
+  await missingPiano.route("**/assets/piano.mp3", (route) => route.abort());
+  await missingPiano.goto(`${base}/perfect-pitch/`);
+  await missingPiano.locator("#start").click();
+  await missingPiano.locator("#start-error:not([hidden])").waitFor();
+  assert.match(
+    await missingPiano.locator("#start-error").textContent(),
+    /piano recordings could not load/,
+  );
+  await missingPiano.locator('[data-screen="settings"]').click();
+  await missingPiano.locator('[name="timbre"]').selectOption("sine");
+  await missingPiano.locator('[data-screen="play"]').click();
+  await startMode(missingPiano, "single");
+  await missingPiano.context().close();
+  console.log(
+    "PASS: sampled piano preview/play/replay/next work offline after load; failed downloads explain recovery and other timbres remain playable",
+  );
   assert.deepEqual(errors, []);
   console.log("PASS: no uncaught browser errors");
 } finally {

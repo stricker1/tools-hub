@@ -39,6 +39,11 @@ let advanceTimer,
   clockTimer,
   busy = false;
 const sound = new Sound();
+sound.piano.preload(); // Fetch once at page load; playback never streams notes.
+const needsPiano = () =>
+  settings.timbre === "piano" ||
+  settings.randomTimbre ||
+  settings.difficulty === "chaos";
 const KEYS = ["a", "w", "s", "e", "d", "f", "t", "g", "y", "h", "u", "j"];
 const percent = (correct, total) =>
   total ? `${Math.round((correct / total) * 100)}%` : "—";
@@ -168,14 +173,26 @@ $("settings-form").addEventListener("input", (e) => {
 });
 $("preview-sound").addEventListener("click", async () => {
   $("preview-sound").disabled = true;
+  const previewTimbre = settings.timbre;
   try {
-    await sound.unlock(settings.volume);
-    sound.play({ mode: "single", notes: [69], timbre: settings.timbre });
+    $("preview-sound").textContent =
+      settings.timbre === "piano" && !sound.piano.buffer
+        ? "Loading piano…"
+        : "♪ Try sound · A4";
+    await sound.unlock(settings.volume, previewTimbre === "piano");
+    if (
+      $("settings-screen").hidden ||
+      run?.active ||
+      settings.timbre !== previewTimbre
+    )
+      return;
+    sound.play({ mode: "single", notes: [69], timbre: previewTimbre });
     error("preview-error");
   } catch (e) {
     error("preview-error", e.message);
   } finally {
     $("preview-sound").disabled = false;
+    $("preview-sound").textContent = "♪ Try sound · A4";
   }
 });
 
@@ -195,12 +212,18 @@ async function start() {
     return;
   }
   busy = true;
+  $("audio-load-status").hidden = !needsPiano() || Boolean(sound.piano.buffer);
   const ticket = ++token;
   $("start").disabled = true;
   $("again").disabled = true;
+  document
+    .querySelectorAll("[data-mode], #difficulty, #choose-mode")
+    .forEach((button) => {
+      button.disabled = true;
+    });
   setNavigationLocked(true);
   try {
-    await sound.unlock(settings.volume);
+    await sound.unlock(settings.volume, needsPiano());
     if (ticket !== token || document.hidden) return;
     clearTimers();
     run = {
@@ -243,8 +266,14 @@ async function start() {
     setNavigationLocked(false);
   } finally {
     busy = false;
+    $("audio-load-status").hidden = true;
     $("start").disabled = false;
     $("again").disabled = false;
+    document
+      .querySelectorAll("[data-mode], #difficulty, #choose-mode")
+      .forEach((button) => {
+        button.disabled = false;
+      });
     if (!run?.active) setNavigationLocked(false);
   }
 }
@@ -389,7 +418,7 @@ async function replay() {
   const ticket = token;
   $("replay").disabled = true;
   try {
-    await sound.unlock(settings.volume);
+    await sound.unlock(settings.volume, needsPiano());
     if (run?.active && ticket === token) {
       sound.play(question);
       animateSound();
@@ -408,7 +437,7 @@ $("next").addEventListener("click", async () => {
   busy = true;
   const ticket = token;
   try {
-    await sound.unlock(settings.volume);
+    await sound.unlock(settings.volume, needsPiano());
     if (run?.active && ticket === token) {
       error("game-error");
       nextQuestion();

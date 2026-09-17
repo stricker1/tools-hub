@@ -1,0 +1,205 @@
+[
+  {
+    "midi": 24,
+    "sourceHz": 32.2543,
+    "targetHz": 32.7032,
+    "correctionCents": 23.928,
+    "gain": 1.2645
+  },
+  {
+    "midi": 27,
+    "sourceHz": 38.5063,
+    "targetHz": 38.8909,
+    "correctionCents": 17.207,
+    "gain": 1.1404
+  },
+  {
+    "midi": 30,
+    "sourceHz": 45.9679,
+    "targetHz": 46.2493,
+    "correctionCents": 10.564,
+    "gain": 1.1605
+  },
+  {
+    "midi": 33,
+    "sourceHz": 54.7689,
+    "targetHz": 55.0,
+    "correctionCents": 7.289,
+    "gain": 1.28
+  },
+  {
+    "midi": 36,
+    "sourceHz": 65.015,
+    "targetHz": 65.4064,
+    "correctionCents": 10.391,
+    "gain": 1.2109
+  },
+  {
+    "midi": 39,
+    "sourceHz": 77.5149,
+    "targetHz": 77.7817,
+    "correctionCents": 5.95,
+    "gain": 1.1088
+  },
+  {
+    "midi": 42,
+    "sourceHz": 92.2268,
+    "targetHz": 92.4986,
+    "correctionCents": 5.095,
+    "gain": 1.0197
+  },
+  {
+    "midi": 45,
+    "sourceHz": 110.0978,
+    "targetHz": 110.0,
+    "correctionCents": -1.539,
+    "gain": 1.5739
+  },
+  {
+    "midi": 48,
+    "sourceHz": 130.5348,
+    "targetHz": 130.8128,
+    "correctionCents": 3.683,
+    "gain": 1.2733
+  },
+  {
+    "midi": 51,
+    "sourceHz": 155.2031,
+    "targetHz": 155.5635,
+    "correctionCents": 4.015,
+    "gain": 1.2854
+  },
+  {
+    "midi": 54,
+    "sourceHz": 184.6689,
+    "targetHz": 184.9972,
+    "correctionCents": 3.075,
+    "gain": 1.5925
+  },
+  {
+    "midi": 57,
+    "sourceHz": 219.8442,
+    "targetHz": 220.0,
+    "correctionCents": 1.226,
+    "gain": 2.024
+  },
+  {
+    "midi": 60,
+    "sourceHz": 261.3766,
+    "targetHz": 261.6256,
+    "correctionCents": 1.648,
+    "gain": 1.249
+  },
+  {
+    "midi": 63,
+    "sourceHz": 311.2962,
+    "targetHz": 311.127,
+    "correctionCents": -0.941,
+    "gain": 1.7216
+  },
+  {
+    "midi": 66,
+    "sourceHz": 369.4256,
+    "targetHz": 369.9944,
+    "correctionCents": 2.664,
+    "gain": 1.6545
+  },
+  {
+    "midi": 69,
+    "sourceHz": 440.439,
+    "targetHz": 440.0,
+    "correctionCents": -1.727,
+    "gain": 1.4889
+  },
+  {
+    "midi": 72,
+    "sourceHz": 524.2397,
+    "targetHz": 523.2511,
+    "correctionCents": -3.268,
+    "gain": 1.6087
+  },
+  {
+    "midi": 75,
+    "sourceHz": 623.4573,
+    "targetHz": 622.254,
+    "correctionCents": -3.345,
+    "gain": 1.9799
+  },
+  {
+    "midi": 78,
+    "sourceHz": 742.0558,
+    "targetHz": 739.9888,
+    "correctionCents": -4.829,
+    "gain": 1.5976
+  },
+  {
+    "midi": 81,
+    "sourceHz": 883.6406,
+    "targetHz": 880.0,
+    "correctionCents": -7.147,
+    "gain": 2.8965
+  },
+  {
+    "midi": 84,
+    "sourceHz": 1052.0544,
+    "targetHz": 1046.5023,
+    "correctionCents": -9.161,
+    "gain": 2.7182
+  },
+  {
+    "midi": 87,
+    "sourceHz": 1251.5083,
+    "targetHz": 1244.5079,
+    "correctionCents": -9.711,
+    "gain": 2.0246
+  },
+  {
+    "midi": 90,
+    "sourceHz": 1489.9243,
+    "targetHz": 1479.9777,
+    "correctionCents": -11.596,
+    "gain": 3.3376
+  },
+  {
+    "midi": 93,
+    "sourceHz": 1771.5762,
+    "targetHz": 1760.0,
+    "correctionCents": -11.35,
+    "gain": 4.0648
+  },
+  {
+    "midi": 96,
+    "sourceHz": 2121.3424,
+    "targetHz": 2093.0045,
+    "correctionCents": -23.282,
+    "gain": 3.8998
+  },
+  {
+    "midi": 99,
+    "sourceHz": 2515.9173,
+    "targetHz": 2489.0159,
+    "correctionCents": -18.611,
+    "gain": 5.3633
+  },
+  {
+    "midi": 102,
+    "sourceHz": 3006.3212,
+    "targetHz": 2959.9554,
+    "correctionCents": -26.908,
+    "gain": 4.1143
+  },
+  {
+    "midi": 105,
+    "sourceHz": 3599.2921,
+    "targetHz": 3520.0,
+    "correctionCents": -38.565,
+    "gain": 6.7978
+  },
+  {
+    "midi": 108,
+    "sourceHz": 4433.6417,
+    "targetHz": 4186.009,
+    "correctionCents": -99.5,
+    "gain": 5.9959
+  }
+]

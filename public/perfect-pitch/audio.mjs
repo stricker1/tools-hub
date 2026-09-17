@@ -1,15 +1,9 @@
 import { frequency } from "./music.mjs";
+import { PianoSampler } from "./piano.mjs";
 
 // Additive synthesis keeps the fundamental clear and excludes above-Nyquist partials.
 const PARTIALS = {
   sine: [[1, 1]],
-  piano: [
-    [1, 1],
-    [2, 0.42],
-    [3, 0.2],
-    [4, 0.1],
-    [5, 0.055],
-  ],
   organ: [
     [1, 1],
     [2, 0.52],
@@ -35,8 +29,9 @@ export class Sound {
   constructor() {
     this.context = null;
     this.voices = new Set();
+    this.piano = new PianoSampler();
   }
-  async unlock(volume) {
+  async unlock(volume, needsPiano = false) {
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     if (!AudioContext)
       throw new Error(
@@ -57,6 +52,7 @@ export class Sound {
       throw new Error(
         "Audio is paused by your browser. Tap Start or Replay to enable sound.",
       );
+    if (needsPiano) await this.piano.prepare(this.context);
     this.master.gain.setTargetAtTime(
       volume * 0.32,
       this.context.currentTime,
@@ -76,6 +72,18 @@ export class Sound {
     this.voices.clear();
   }
   tone(midi, timbre, start, duration, chordScale) {
+    if (timbre === "piano") {
+      this.piano.tone(
+        this.context,
+        this.master,
+        this.voices,
+        midi,
+        start,
+        duration,
+        chordScale,
+      );
+      return;
+    }
     const ctx = this.context,
       hz = frequency(midi);
     const partials = PARTIALS[timbre].filter(
@@ -94,13 +102,12 @@ export class Sound {
         registerGain *
         chordScale *
         (multiple > 1 ? Math.min(1, 2400 / (hz * multiple)) : 1);
-      const attack =
-        timbre === "soft" ? 0.065 : timbre === "piano" ? 0.006 : 0.018;
+      const attack = timbre === "soft" ? 0.065 : 0.018;
       const release = timbre === "organ" ? 0.07 : 0.16;
       gain.gain.setValueAtTime(0, start);
       gain.gain.linearRampToValueAtTime(peak, start + attack);
       gain.gain.exponentialRampToValueAtTime(
-        Math.max(0.0001, peak * (timbre === "piano" ? 0.16 : 0.8)),
+        Math.max(0.0001, peak * 0.8),
         start + duration,
       );
       gain.gain.exponentialRampToValueAtTime(

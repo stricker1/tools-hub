@@ -29,7 +29,7 @@ export const FLATS = [
 ];
 export const TIMBRES = {
   sine: "Pure sine",
-  piano: "Piano-like",
+  piano: "Acoustic piano",
   organ: "Organ",
   soft: "Soft synth",
   bright: "Bright synth",

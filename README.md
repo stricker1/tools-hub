@@ -43,7 +43,8 @@ Do not commit `.dev.vars`, `.env*`, tokens, Wrangler state, or logs. These paths
 `public/perfect-pitch/` is a dependency-free browser game at `/perfect-pitch/`.
 It uses ES modules and Web Audio; serve it over HTTP rather than opening the HTML
 as a `file://` URL. It needs no build step, API keys, database, or Worker changes.
-All assets are local, with no network requests needed during play after loading.
+All assets are local. A 760 KB piano bank preloads with the page and is decoded
+before piano or random-timbre runs start; no network requests are needed during play.
 
 ```bash
 python3 -m http.server 8765 --directory public
@@ -56,8 +57,21 @@ python3 -m http.server 8765 --directory public
   Speed Round, and one-miss Streak Mode.
 - Equal temperament: `frequency = 440 * 2 ** ((midi - 69) / 12)`; MIDI 60 is C4.
   Pitch classes are numeric, so enharmonic labels never affect correctness.
-- Five additive timbres with envelopes, high-register attenuation, bounded
-  harmonics, polyphony compensation, and an output compressor. No samples.
+- Acoustic piano uses 29 real stereo Salamander Grand Piano recordings (Yamaha
+  C5, Alexander Holm, CC BY 3.0), spanning C1–C8 at minor-third intervals. Each
+  playable pitch uses the nearest recording, transposed by at most one semitone.
+  The bank corrects the recordings’ estimated pitch toward A4 = 440 Hz
+  equal temperament; natural string resonances and decay remain. The correction
+  report is `assets/piano-tuning.json`. Four other timbres use additive synthesis.
+  All share polyphony compensation,
+  register-aware gain, release envelopes, and an output compressor.
+- Piano attribution, license links, source version, and modifications are in
+  `public/perfect-pitch/assets/PIANO-LICENSE.txt`, linked from Settings. To rebuild
+  the compact bank, follow `scripts/build-piano.py` (developer-only ffmpeg/numpy/scipy;
+  no runtime dependency). The MP3 decodes to about 22 MB at 44.1 kHz stereo.
+- A loading message appears before a piano run when needed. A failed sample
+  download/decode gives a useful error; other timbres remain available. There is
+  no silent synthetic substitute for the acoustic piano.
 - Easy C4–B5, Normal C3–B5, Hard C1–B7, and Chaos C1–B7 with random timbres.
   Custom full-octave ranges are available in Settings. Intervals and open chord
   voicings need two or more octaves; every played note stays within the range.
