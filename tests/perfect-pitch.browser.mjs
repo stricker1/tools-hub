@@ -32,7 +32,8 @@ async function newPage(options = {}) {
   const page = await context.newPage();
   page.on("pageerror", (e) => errors.push(e.message));
   await page.addInitScript((s) => {
-    localStorage.setItem("perfect-pitch.settings.v1", JSON.stringify(s));
+    if (!localStorage.getItem("perfect-pitch.settings.v1"))
+      localStorage.setItem("perfect-pitch.settings.v1", JSON.stringify(s));
     Math.random = () => 0.41;
   }, settings);
   await page.goto(`${base}/perfect-pitch/`);
@@ -303,6 +304,59 @@ try {
   console.log(
     "PASS: five real OfflineAudioContext renders; finite, unclipped, distinct envelopes; A4 sine at 440 Hz",
   );
+  const whites = await newPage({ viewport: { width: 320, height: 740 } });
+  await whites.locator('[data-screen="settings"]').click();
+  await whites.locator('[name="includeBlackKeys"]').uncheck();
+  await whites.reload();
+  await whites.locator('[data-screen="settings"]').click();
+  assert.equal(
+    await whites.locator('[name="includeBlackKeys"]').isChecked(),
+    false,
+  );
+  await whites.locator('[data-screen="play"]').click();
+  assert.match(
+    await whites.locator("#setup-description").textContent(),
+    /White keys only/,
+  );
+  for (const mode of ["single", "exact", "speed", "streak"]) {
+    await startMode(whites, mode);
+    assert.equal(await whites.locator("#pitch-buttons button").count(), 7);
+    assert.equal(await whites.locator("#pitch-buttons .accidental").count(), 0);
+    await whites.keyboard.press("w");
+    assert.equal(
+      await whites.locator("#arena.correct, #arena.wrong").count(),
+      0,
+    );
+    const q = makeQuestion(
+      mode,
+      { ...settings, includeBlackKeys: false },
+      null,
+      () => 0.41,
+    );
+    await correctAnswer(whites, mode, q);
+    assert.ok(
+      await whites.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth,
+      ),
+    );
+    if (mode === "single")
+      await whites.screenshot({
+        path: "/tmp/perfect-pitch-white-keys.png",
+        fullPage: true,
+      });
+    await whites.locator("#finish").click();
+    await whites.locator("#choose-mode").click();
+  }
+  await whites.locator('[data-screen="settings"]').click();
+  await whites.locator('[name="includeBlackKeys"]').check();
+  await whites.locator('[data-screen="play"]').click();
+  await startMode(whites, "single");
+  assert.equal(await whites.locator("#pitch-buttons button").count(), 12);
+  assert.equal(await whites.locator("#pitch-buttons .accidental").count(), 5);
+  console.log(
+    "PASS: white-key toggle persists, filters four note modes and keyboard input, fits 320px, and restores black keys",
+  );
+  await whites.context().close();
   assert.deepEqual(errors, []);
   console.log("PASS: no uncaught browser errors");
 } finally {

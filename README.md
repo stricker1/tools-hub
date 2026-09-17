@@ -61,6 +61,10 @@ python3 -m http.server 8765 --directory public
 - Easy C4–B5, Normal C3–B5, Hard C1–B7, and Chaos C1–B7 with random timbres.
   Custom full-octave ranges are available in Settings. Intervals and open chord
   voicings need two or more octaves; every played note stays within the range.
+- Settings → Include black keys can be turned off for white-key-only Single
+  Note, Exact Note, Speed Round, and Streak Mode. The seven natural-note pads
+  remain, and black-key keyboard shortcuts are ignored. Intervals/chords still
+  use all notes; the separate Note names setting controls sharp/flat spelling.
 - Exact Note and Root + Quality accept their two answer parts in either order;
   the second selection submits immediately. Replay keeps the original response
   clock running. Interval timing starts at the second note's onset.

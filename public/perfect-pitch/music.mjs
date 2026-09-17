@@ -78,11 +78,16 @@ export const DEFAULTS = {
   timbre: "piano",
   randomTimbre: false,
   spelling: "both",
+  includeBlackKeys: true,
   auto: true,
   volume: 0.45,
   direction: "both",
   showTime: true,
 };
+export const WHITE_KEYS = [0, 2, 4, 5, 7, 9, 11];
+export const usesWhiteKeys = (mode, settings) =>
+  settings.includeBlackKeys === false &&
+  ["single", "exact", "speed", "streak"].includes(mode);
 export const frequency = (midi) => 440 * 2 ** ((midi - 69) / 12);
 export const octave = (midi) => Math.floor(midi / 12) - 1;
 export function pitchName(pc, spelling = "both") {
@@ -106,7 +111,7 @@ export function cleanSettings(raw) {
   })) {
     if (allowed.includes(raw[key])) s[key] = raw[key];
   }
-  for (const key of ["randomTimbre", "auto", "showTime"])
+  for (const key of ["randomTimbre", "auto", "showTime", "includeBlackKeys"])
     if (typeof raw[key] === "boolean") s[key] = raw[key];
   for (const key of ["low", "high"])
     if (Number.isInteger(raw[key]) && raw[key] >= 1 && raw[key] <= 7)
@@ -157,6 +162,8 @@ export function makeQuestion(
   const min = low - Math.min(...offsets),
     max = high - Math.max(...offsets);
   let candidates = Array.from({ length: max - min + 1 }, (_, i) => min + i);
+  if (usesWhiteKeys(mode, settings))
+    candidates = candidates.filter((n) => WHITE_KEYS.includes(n % 12));
   // Remove the exact previous starting note, rather than repeatedly rerolling.
   if (previous && candidates.length > 1)
     candidates = candidates.filter((n) => n !== previous.midi);

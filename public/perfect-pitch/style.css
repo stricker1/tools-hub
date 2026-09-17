@@ -1154,3 +1154,12 @@ dialog form {
     margin-block: 16px;
   }
 }
+
+.pitch-grid.white-keys {
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+@media (max-width: 650px) {
+  .pitch-grid.white-keys {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}

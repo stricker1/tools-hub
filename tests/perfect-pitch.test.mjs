@@ -210,3 +210,54 @@ test("blocked storage and corrupt JSON never throw", () => {
   assert.equal(writeStored("test", {}), false);
   delete globalThis.localStorage;
 });
+
+test("white-key setting filters note modes across ranges without changing harmony modes", () => {
+  const whiteKeys = [0, 2, 4, 5, 7, 9, 11];
+  assert.equal(cleanSettings({}).includeBlackKeys, true);
+  assert.equal(
+    cleanSettings({ includeBlackKeys: false }).includeBlackKeys,
+    false,
+  );
+  assert.equal(
+    cleanSettings({ includeBlackKeys: "false" }).includeBlackKeys,
+    true,
+  );
+  for (const mode of ["single", "exact", "speed", "streak"]) {
+    for (const [low, high] of [
+      [1, 1],
+      [4, 5],
+      [1, 7],
+    ]) {
+      const s = { ...DEFAULTS, low, high, includeBlackKeys: false };
+      const seen = new Set();
+      let previous;
+      for (let i = 0; i < 100; i++) {
+        const q = makeQuestion(mode, s, previous, () => i / 100);
+        assert.ok(whiteKeys.includes(q.pc));
+        assert.ok(q.midi >= (low + 1) * 12 && q.midi <= (high + 1) * 12 + 11);
+        if (previous) assert.notEqual(q.midi, previous.midi);
+        seen.add(q.pc);
+        previous = q;
+      }
+      assert.equal(seen.size, 7);
+    }
+  }
+  for (const mode of ["interval", "chord", "root"]) {
+    assert.deepEqual(
+      makeQuestion(
+        mode,
+        { ...DEFAULTS, includeBlackKeys: false },
+        null,
+        () => 0.41,
+      ),
+      makeQuestion(mode, DEFAULTS, null, () => 0.41),
+    );
+  }
+  const all = new Set(
+    Array.from(
+      { length: 120 },
+      (_, i) => makeQuestion("single", DEFAULTS, null, () => i / 120).pc,
+    ),
+  );
+  assert.equal(all.size, 12);
+});
