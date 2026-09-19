@@ -123,3 +123,85 @@ Before merging, listen on a physical phone and your usual headphones/speakers:
 check first-tap playback and Replay in Safari/Chrome, comfortable volume across
 registers and timbres, Exact/Root two-part answers, and the feel of a full speed
 round. Browser automation does not substitute for a subjective listening check.
+
+## Accounting Practice
+
+`public/accounting-practice/` is a dependency-free, client-side practice workspace
+at `/accounting-practice/`. It uses the same static asset routing and cream/green
+palette as the hub; no build, backend, deployment configuration, or API keys are
+needed. The existing account trainer remains available separately.
+
+### Practice flow
+
+- Journal → four-column ledger → unadjusted trial balance → financial results →
+  optional audit correction. All sections remain navigable while you practice.
+- Beginner uses cash transactions and two-account entries. Intermediate adds
+  receivables, payables, prepayments, and compound purchases. Advanced adds opening
+  balances, notes, unearned/earned rent, returns, refunds, supplies usage, multiple
+  journal pages, and correcting entries. Custom exposes nine concept toggles.
+- The reference sidebar contains the company, chart, opening trial balance,
+  transaction list and optional DEALER reminder. Journal account inputs accept
+  names or numbers through a keyboard-friendly datalist. Credit titles indent
+  automatically; empty extra journal rows are ignored when checking.
+- Journal Post Ref. is the account number (entered here as posting practice).
+  Ledger Post. Ref. is the plain journal page number, not `J18`. Opening balances
+  are provided and running balances recalculate from the learner's postings.
+  Ledger Item is an optional, ungraded memo.
+- Section checks distinguish account, side, amount, date and reference errors.
+  Hints do not fill answers. Explanations appear after checking. Reveals mark
+  assisted fields purple and retain their provenance across reloads.
+- Trial balances are **before closing**. Retained Earnings there is the opening
+  balance; Results calculates ending retained earnings after closing. Documented
+  supplies usage is a during-month entry, not an unstated adjusting requirement.
+  The audit correction is a separate later task and does not change the original
+  journal/trial balance/results answer key.
+- The versioned Problem ID includes the difficulty and concept bitmask, so copying
+  and reopening it reproduces the same company, dates, transactions and answers.
+  The generator is frozen by its `AP1` version; incompatible future changes should
+  use a new seed version rather than silently changing existing problems.
+
+### Modules and accounting model
+
+- `engine.mjs`: seeded PRNG, account definitions/normal sides, dependency-aware
+  transaction templates, integer-dollar double-entry model, derived answer keys,
+  and a runtime verifier invoked for every generated problem.
+- `validation.mjs`: money parsing, blank work, account-based journal matching,
+  per-cell feedback, section validation and answer filling.
+- `storage.mjs`: guarded local persistence and first-check accuracy aggregation.
+- `app.mjs`, `index.html`, `style.css`: accessible form controls, workflow,
+  responsive table scroll regions, references and local progress UI.
+
+The generator shuffles independent transaction groups and keeps dependent actions
+(bill then collection, purchase then return) in order. It rejects unbalanced
+entries and negative asset balances. The verifier independently replays journal
+activity against every ledger posting and running balance, compares each trial
+balance account, reconciles revenue/expense/net-income/retained-earnings results,
+and checks the separate correcting entry. All generated amounts use integer
+whole dollars, avoiding floating-point accumulation drift.
+
+Progress lives only in `accounting-practice.v1` in localStorage. Storage denial,
+invalid JSON, malformed saved work and quota errors fall back to usable in-memory
+practice with a notice. No other tool's keys are modified. First-check accuracy
+counts entries/items once per section per attempt, excludes reveals, and does not
+increase through repeated checks. Resets start a new attempt; statistics reset
+keeps the current attempt and its answers. Completed problems using reveals are
+also counted as assisted.
+
+### Verification
+
+```bash
+node --test tests/*.test.mjs
+python3 -m http.server 8765 --directory public
+# In another terminal, with Playwright and Chromium installed:
+node tests/accounting-practice.browser.mjs
+```
+
+The accounting unit suite covers 3,000 preset problems and all 512 custom concept
+combinations, independent journal/ledger/trial/results reconciliation, positive
+and negative net income, every correction category, seed reproduction, damaged
+answer-key detection, validation diagnostics, money parsing, stats and storage.
+The browser suite checks all five sections through DOM inputs, references,
+indentation, reveal provenance, persistence, custom seeds, resets, storage
+failure, hub integration, and four viewport widths. Screenshots go to `/tmp/`.
+`PLAYWRIGHT_MODULE`, `CHROMIUM_PATH` and `TEST_URL` have the same meaning as in the
+Perfect Pitch suite above. Playwright is a development-only dependency.

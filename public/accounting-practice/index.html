@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Practice the full accounting workflow, from journal entries to financial results, with reproducible problems and helpful feedback."
+    />
+    <title>accounting practice · little tools</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <header>
+        <a href="/" class="back">← little tools</a
+        ><button id="stats-button">Your progress ↗</button>
+      </header>
+      <section class="hero">
+        <div>
+          <p class="eyebrow">a little practice, a lot of clarity</p>
+          <h1>accounting practice<span>.</span></h1>
+          <p class="sub">Follow the money. Build the books. Make it balance.</p>
+        </div>
+        <div class="hero-mark" aria-hidden="true">Dr <span>↔</span> Cr</div>
+      </section>
+      <div id="storage-notice" class="notice" role="status" hidden></div>
+      <section class="controls" aria-label="Problem controls">
+        <label
+          >Difficulty<select id="difficulty">
+            <option value="beginner">Beginner</option>
+            <option value="intermediate">Intermediate</option>
+            <option value="advanced">Advanced</option>
+            <option value="custom">Custom</option>
+          </select></label
+        ><button id="new" class="primary">New problem +</button>
+        <div class="seed-control">
+          <label for="seed">Problem ID</label>
+          <div>
+            <input
+              id="seed"
+              spellcheck="false"
+              aria-label="Problem ID"
+            /><button id="copy" title="Copy Problem ID">Copy</button
+            ><button id="open-seed">Open</button>
+          </div>
+        </div>
+        <button id="reset" class="quiet">Reset problem</button>
+      </section>
+      <fieldset id="custom" hidden>
+        <legend>Concepts for your next problem</legend>
+        <div id="concepts"></div>
+      </fieldset>
+      <nav id="steps" aria-label="Practice steps"></nav>
+      <div class="layout">
+        <aside id="reference"></aside>
+        <main id="workspace" tabindex="-1"></main>
+      </div>
+      <footer class="actionbar">
+        <div id="feedback" role="status" aria-live="polite">
+          Take it one entry at a time.
+        </div>
+        <div class="actions">
+          <button id="hint">Hint</button
+          ><button id="explain" hidden>Show explanation</button
+          ><button id="reveal">Reveal answer</button
+          ><button id="check" class="primary">Check journal</button
+          ><button id="next" title="Next section">Next →</button>
+        </div>
+      </footer>
+      <p class="footnote">
+        Your work saves on this device. No accounts, no pressure.
+      </p>
+    </div>
+    <dialog id="stats-dialog">
+      <div class="dialog-head">
+        <h2>Your practice</h2>
+        <button id="close-stats" aria-label="Close statistics">✕</button>
+      </div>
+      <div id="stats-content"></div>
+      <button id="reset-stats">Reset statistics</button>
+    </dialog>
+    <dialog id="confirm-dialog">
+      <h2 id="confirm-title"></h2>
+      <p id="confirm-text"></p>
+      <form method="dialog">
+        <button value="cancel">Keep working</button
+        ><button value="confirm" class="primary">Continue</button>
+      </form>
+    </dialog>
+    <datalist id="accounts"></datalist>
+    <script type="module" src="./app.mjs"></script>
+    <noscript
+      >This practice tool needs JavaScript to generate and check
+      problems.</noscript
+    >
+  </body>
+</html>
