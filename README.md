@@ -205,3 +205,52 @@ indentation, reveal provenance, persistence, custom seeds, resets, storage
 failure, hub integration, and four viewport widths. Screenshots go to `/tmp/`.
 `PLAYWRIGHT_MODULE`, `CHROMIUM_PATH` and `TEST_URL` have the same meaning as in the
 Perfect Pitch suite above. Playwright is a development-only dependency.
+
+## Chapter 3: adjustments
+
+The Chapter 3 section lives at `/accounting-practice/chapter-3/`, linked from both
+Accounting Practice and the Tools Hub. It is a static ES-module app with no build
+step, external runtime assets, backend, or changes to the existing practice data.
+
+- **Learn & practice:** six adjustment types, each moving from the business event
+  to the amount, adjusting entry, and financial-statement effect. Topic filters,
+  optional hints, direct-entry practice, and worked answers support different
+  levels of guidance.
+- **Complete a month:** one seeded business case connects eight transactions,
+  ledger postings, an unadjusted trial balance, six adjustments, an adjusted
+  trial balance, and statement calculations. Balances derive from the journal;
+  after an adjustment, the account comparison includes preceding adjustments.
+- **Mistake detective:** randomized omission effects, balanced-but-wrong books,
+  accrual timing, book value, later settlement, and vertical analysis. Each
+  answer has an explanation, including the incorrect choices.
+- **Field guide:** nine concise lessons explain timing, each adjustment family,
+  contra assets, error effects, statements, and vertical analysis.
+
+Session state and per-topic statistics use `little-tools:chapter-3:v1` in
+localStorage. A reload restores answers, mode, and current case. Storage errors
+fall back to an in-memory session with a visible notice. New cases replace only
+the current case; old Accounting Practice and Account Trainer data are untouched.
+First-attempt performance excludes hints, repeat attempts, and reveals. These
+are practice-question counts, not a claim of mastery.
+
+Cases use exact whole-dollar amounts. Insurance starts on the first day, a full
+month of straight-line depreciation is specified, supplies are initially assets,
+and advances are initially liabilities. Cases have no beginning retained
+earnings or dividends. The adjusted trial balance is before closing; statements
+compute ending retained earnings from net income. These simplifying assumptions
+are explicit in the interface.
+
+Run locally with the repository's existing HTTP server command, then visit
+`http://localhost:8765/accounting-practice/chapter-3/`.
+
+```bash
+node --test tests/chapter-3.test.mjs
+# With Playwright and Chromium installed, and the HTTP server running:
+TEST_URL=http://127.0.0.1:8765 node tests/chapter-3.browser.mjs
+```
+
+The deterministic tests independently reconcile 1,000 months, verify omitted
+adjustments, validate entry diagnostics, and check 3,500 randomized detective
+questions for exactly one correct answer. Browser checks cover guided practice,
+the complete cycle, feedback, reload recovery, statistics, navigation, and small
+screens.
