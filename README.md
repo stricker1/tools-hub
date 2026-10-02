@@ -254,3 +254,50 @@ adjustments, validate entry diagnostics, and check 3,500 randomized detective
 questions for exactly one correct answer. Browser checks cover guided practice,
 the complete cycle, feedback, reload recovery, statistics, navigation, and small
 screens.
+
+### Chapter 3 Practice Lab
+
+The linked lab at `/accounting-practice/chapter-3/lab/` adds textbook-style
+practice alongside the original four learning modes:
+
+- **Read the wording:** six topic filters with randomized figures and phrasing.
+  Identify whether a clue gives a remaining balance or a period change, then
+  build the adjusting entry. Feedback addresses cash, reversed sides, remaining
+  versus used amounts, contra assets, and earning advance rent.
+- **Rebuild seven entries:** reconstruct adjustments from complete unadjusted
+  and adjusted trial balances. Each account is affected by at most one entry.
+  Cases include supplies, insurance, two depreciation entries, unearned rent,
+  accrued wages, and either accrued fees or utilities payable.
+- **Adjust the balances:** use those same seven entries to practice posting.
+  Check individual rows or the visible worksheet; walkthroughs explain each
+  calculation and ending side. Focus on changed accounts and fill unchanged rows
+  automatically. Live totals include hidden rows. A balanced total is never
+  treated as proof of correct answers.
+- **Concept checks:** shuffled 16-topic decks with fresh numbers, shuffled
+  options, and specific explanations for every distractor. Topics include
+  recognition timing, terminology, omission effects, accrued workdays, book
+  value, retained earnings before closing, and software versus human judgment.
+
+Lab cases are full-year, before-closing cases with opening retained earnings
+and dividends (unlike the original first-month exercise). Recorded balances and
+all seven adjustments reconcile by construction. Equipment and Building retain
+their original costs. Revenue questions explicitly say completed work is
+unrecorded; unbilled alone is not taught as a synonym for unrecorded.
+
+The lab saves current worksheets, drafts, navigation, and separate first-try,
+practiced, and revealed completion counts under
+`little-tools:chapter-3:lab:v1`. Row walkthroughs count as assistance. Automatically
+carried-forward rows do not count as practice. New cases replace both linked
+worksheets; lifetime counts remain. Old question drafts are discarded to keep
+storage bounded. Storage failures display a notice and leave practice usable.
+
+```bash
+node --test tests/chapter-3-lab.test.mjs tests/chapter-3.test.mjs
+# With Playwright, Chromium, and the existing HTTP server:
+TEST_URL=http://127.0.0.1:8765 node tests/chapter-3-lab.browser.mjs
+```
+
+The lab tests reconcile 1,000 cases, verify 900 wording questions and 3,200
+concept questions, and exercise the browser flows, assistance counts, reload
+recovery, storage failure, and mobile layouts. Both browser scripts accept
+`PLAYWRIGHT_MODULE` and `CHROMIUM_PATH` overrides for local installations.
