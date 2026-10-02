@@ -23,6 +23,37 @@
   font-size: 15px;
   line-height: 1.6;
 }
+.lab-link {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  align-items: center;
+  margin: 0 0 28px;
+  padding: 22px 26px;
+  background: var(--soft);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  text-decoration: none;
+}
+.lab-link > span:first-child {
+  display: grid;
+  gap: 5px;
+}
+.lab-link strong {
+  font-size: 20px;
+  font-weight: 550;
+}
+.lab-link span span:last-child {
+  font-size: 13px;
+  color: var(--muted);
+}
+.lab-link-arrow {
+  font-size: 30px;
+  color: var(--green);
+}
+.lab-link:hover {
+  border-color: var(--green);
+}
 * {
   box-sizing: border-box;
 }

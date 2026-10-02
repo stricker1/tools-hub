@@ -1,0 +1,334 @@
+.hero {
+  padding-top: 42px;
+}
+.after-label {
+  margin-top: 24px;
+}
+.balance-before {
+  display: block;
+  font-size: 11px;
+  color: var(--muted);
+}
+.hero-note {
+  flex-shrink: 0;
+}
+.hero-note p {
+  font-size: 28px;
+}
+fieldset {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+.question-legend {
+  font-weight: 600;
+  font-size: 16px;
+  margin-bottom: 12px;
+}
+.textbook {
+  margin: 20px 0;
+  border-left: 3px solid var(--green);
+  background: #f7f8f2;
+  padding: 20px;
+  font-family: Georgia, serif;
+  font-size: 23px;
+  line-height: 1.5;
+}
+.role-choices {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 26px;
+}
+.role-choices label {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  border: 1px solid var(--line);
+  padding: 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  color: var(--ink);
+  font-size: 14px;
+}
+.role-choices label:has(input:checked) {
+  background: var(--soft);
+  border-color: var(--green);
+}
+.role-choices input,
+.checkbox-label input {
+  min-height: auto;
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+  accent-color: var(--green);
+}
+.journal-fields {
+  display: grid;
+  gap: 14px;
+  margin: 16px 0 22px;
+}
+.journal-fields label {
+  display: grid;
+  gap: 6px;
+}
+.journal-fields label:last-child {
+  max-width: 220px;
+}
+.reading-steps {
+  padding-left: 20px;
+}
+.reading-steps li {
+  padding: 6px 0;
+  font-size: 14px;
+}
+.direction-guide dt {
+  font-weight: 600;
+  margin-top: 12px;
+  font-size: 13px;
+}
+.direction-guide dd {
+  margin: 3px 0;
+  font-size: 13px;
+}
+.worked {
+  border-top: 1px dashed var(--line);
+  padding-top: 16px;
+  margin-top: 24px;
+}
+.entry-nav {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 24px 0;
+}
+.entry-nav button {
+  font-size: 12px;
+  padding: 9px 12px;
+}
+.entry-nav button[aria-current="step"] {
+  background: var(--green);
+  color: white;
+}
+.reverse-layout {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+}
+.focus-account {
+  background: var(--yellow);
+  padding: 14px;
+  border-radius: 8px;
+}
+.reference {
+  padding: 22px;
+}
+.reference th[scope="row"],
+.trial-table th[scope="row"] {
+  font-size: 13px;
+  color: var(--ink);
+  letter-spacing: 0;
+  font-weight: 500;
+}
+.reference th[scope="row"] {
+  min-width: 140px;
+}
+.reference tfoot {
+  font-weight: 650;
+}
+.reference .target-row {
+  background: var(--yellow);
+}
+.reference .target-row span {
+  display: block;
+}
+.trial-intro {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 260px;
+  align-items: center;
+  gap: 28px;
+  margin: 32px 0 22px;
+}
+.trial-intro p {
+  max-width: 680px;
+  margin-bottom: 0;
+}
+.rule-note {
+  background: var(--yellow);
+  padding: 20px 24px;
+  border-radius: 12px;
+  font-size: 14px;
+}
+.adjustment-reference {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 18px 22px;
+}
+summary {
+  cursor: pointer;
+  min-height: 28px;
+}
+.adjustment-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+.adjustment-grid > div {
+  background: var(--soft);
+  border-radius: 10px;
+  padding: 14px;
+}
+.adjustment-grid p {
+  font-size: 13px;
+  margin: 6px 0 0;
+}
+.checkbox-label {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  min-height: 44px;
+  color: var(--ink);
+  font-size: 13px;
+}
+.trial-panel {
+  padding: 8px 18px;
+}
+.trial-table {
+  min-width: 750px;
+}
+.trial-table th[scope="row"] {
+  width: 24%;
+}
+.trial-table th:nth-child(3) {
+  width: 230px;
+}
+.balance-input {
+  display: grid;
+  grid-template-columns: 125px 80px;
+  gap: 8px;
+}
+.balance-input input {
+  width: 125px;
+}
+.account-type {
+  display: block;
+  font-size: 11px;
+  color: var(--muted);
+}
+.row-action {
+  font-size: 12px;
+  min-width: 190px;
+}
+.row-action button {
+  min-height: 40px;
+  padding: 6px 12px;
+}
+.row-action summary {
+  margin: 8px 0;
+}
+.row-action details p {
+  max-width: 360px;
+}
+.row-feedback {
+  margin: 6px 0;
+}
+.totals-strip {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.4fr;
+  gap: 18px;
+  padding: 22px 24px;
+  margin-top: 20px;
+  background: var(--soft);
+  border-radius: 14px;
+}
+.totals-strip > div {
+  display: grid;
+  gap: 4px;
+  align-content: start;
+}
+.totals-strip strong {
+  font-size: 21px;
+  font-weight: 550;
+  font-variant-numeric: tabular-nums;
+}
+.timing-note {
+  display: grid;
+  gap: 6px;
+  border-left: 2px solid #b8c69e;
+  padding-left: 18px;
+}
+.timing-note span {
+  font-size: 10px;
+  letter-spacing: 0.09em;
+  color: var(--muted);
+  margin-top: 12px;
+}
+.timing-note strong {
+  font-size: 14px;
+  font-weight: 500;
+}
+.option-explanations p {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 14px;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+@media (max-width: 1000px) {
+  .reverse-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .reference {
+    max-width: 100%;
+  }
+}
+@media (max-width: 760px) {
+  .hero-note {
+    display: none;
+  }
+  .trial-intro {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+  }
+  .adjustment-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .totals-strip {
+    grid-template-columns: 1fr 1fr;
+  }
+  .totals-strip > div:last-child {
+    grid-column: 1 / -1;
+  }
+  .case-heading {
+    flex-wrap: wrap;
+  }
+  .textbook {
+    font-size: 21px;
+    padding: 16px;
+  }
+}
+@media (max-width: 420px) {
+  .adjustment-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .entry-nav {
+    gap: 6px;
+  }
+  .entry-nav button {
+    width: 100%;
+    text-align: left;
+  }
+  .trial-panel {
+    padding: 8px;
+  }
+  .reference {
+    padding: 16px;
+  }
+}
