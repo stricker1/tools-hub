@@ -335,7 +335,7 @@
     function cardMarkup(tool) {
       const hasUrl = Boolean(tool.url);
       const wrapperTag = hasUrl ? "a" : "article";
-      const href = hasUrl ? ` href="${escapeHTML(tool.url)}" target="_blank" rel="noopener noreferrer"` : "";
+      const href = hasUrl ? ` href="${escapeHTML(tool.url)}"` : "";
       const className = hasUrl ? "card clickable" : "card";
       const status = hasUrl
         ? `<span class="status live"><span class="dot"></span>Live</span>`
