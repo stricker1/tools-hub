@@ -301,3 +301,79 @@ The lab tests reconcile 1,000 cases, verify 900 wording questions and 3,200
 concept questions, and exercise the browser flows, assistance counts, reload
 recovery, storage failure, and mobile layouts. Both browser scripts accept
 `PLAYWRIGHT_MODULE` and `CHROMIUM_PATH` overrides for local installations.
+
+## Chapter 4: close the books
+
+`/accounting-practice/chapter-4/` adds a standalone, dependency-free practice tool
+and a Tools Hub card. It reuses Chapter 3's base styles and seeded random helpers;
+no existing exercise, Worker routing, or deployment configuration changes.
+
+- **The big picture:** all ten accounting-cycle steps, with the purpose of each,
+  connections to the next, the optional worksheet, and the distinction between
+  adjusting and closing. Chapter 4's steps 5, 8, 9, and 10 are highlighted.
+- **Concept checks:** twelve-topic shuffled decks with fresh figures and shuffled
+  choices. A click checks immediately; incorrect answers explain the accounting
+  logic and allow retry. First-try counts are separate from eventual completion.
+- **Journal entries:** randomized adjustments and compound closing entries.
+  Select accounts and enter debit/credit amounts; the checker distinguishes
+  wrong accounts, wrong sides, missing lines, and wrong amounts. Completed entries
+  show the before/entry/after ledger posting.
+- **Financial statements:** income statement, statement of stockholders' equity
+  (including stock issuance), and classified balance sheet with classification
+  checks. Optional source carry-forward avoids retyping reference balances while
+  leaving totals and classification to the learner.
+- **Full cycle:** four adjustments → adjusted trial balance → all three financial
+  statements → closing entries → post-closing trial balance. Verified completion
+  unlocks later stages; previous entries remain reviewable. Unchanged balances
+  can be carried automatically. PTB practice explicitly includes/omits accounts.
+
+Both the four-step **Income Summary** method and the two-entry **direct to
+Retained Earnings** method are supported, including net losses and break-even
+Income Summary handling. Changing the method invalidates closing/PTB work but
+preserves earlier stages. Resetting an earlier exercise invalidates dependent
+later stages. Revealed answers and hints mark an exercise as assisted.
+
+### Data and assumptions
+
+Each seed generates a service company's opening balances, recorded June
+transactions, four adjustments drawn from six adjustment families, and derived
+statements/closing balances. Dollar figures are multiples of $50, generally in
+the hundreds or low thousands. Scenarios include income, losses, retained
+earnings deficits, dividends, and optional stock issuance. Both closing methods
+must yield the exact same ledger. A runtime verifier checks every generated case.
+
+The interface states its simplifying assumptions: one-year operating cycle,
+long-term note with no current principal portion, short-term unearned services,
+and no unstated taxes, interest, or adjustments. The three requested statements
+are practiced; a cash-flow statement is outside this tool's scope. Cases use the
+month ended June 30, 2026; the balance sheet and trial balances use June 30.
+
+### Persistence and accessibility
+
+Work is stored only in `little-tools:chapter-4:v1`. It saves current companies,
+input drafts, navigation, feedback, assistance status, theme, and concept counts.
+New problems discard the corresponding old exercise drafts. Malformed or
+unavailable storage displays a notice and permits in-memory practice. No other
+tool's storage is touched. System/light/dark themes, labeled native inputs,
+keyboard-accessible buttons, focus indicators, a skip link, status messages,
+responsive layouts, and contained table scrolling are provided. Links use the
+same tab. There are no external runtime assets or network requests.
+
+### Verification
+
+```bash
+node --test tests/*.test.mjs
+# Optional developer-only DOM runner; install linkedom outside this repository:
+npm install --prefix /tmp/ch4-dom --no-save --package-lock=false linkedom
+LINKEDOM_MODULE=/tmp/ch4-dom/node_modules/linkedom/esm/index.js node tests/chapter-4.dom.mjs
+```
+
+The Chapter 4 unit suite independently reconciles 2,000 companies, both closing
+methods, profit/loss/deficit/break-even cases, malformed entries, corrupted data,
+and randomized concept decks. The DOM suite drives all five modes through actual
+controls, completes both closing methods, and checks feedback, carry-forward,
+stage gating, dependency resets, reload, themes, and blocked/corrupt storage.
+It does not launch a browser or verify rendered layout. Before merging, review
+at desktop and mobile widths (including 320px), in light/dark modes, and check
+keyboard focus and table scrolling in a real browser. Local preview uses the
+existing HTTP-server command; no build or production deployment is required.
