@@ -41,6 +41,11 @@ export function generateCase(seed = 1, kind = 'income') {
   const source=rows.filter(r=>r.group!=='Subtotal' && r.amount!==null).map(r=>({...r,amount:Math.abs(r.amount)}));
   if(kind==='income') {
     for(const [id,label,why] of [
+      ['receivable','Accounts Receivable','Asset: amounts customers owe belong on the balance sheet, not as another Sales line.'],
+      ['building','Building','Long-lived asset on the balance sheet, not an expense of this period.'],
+      ['note','Notes Payable','Liability: principal owed is distinct from Interest Expense.'],
+      ['retained','Retained Earnings','Equity from accumulated earnings, not revenue of this year.'],
+      ['store','Store Supplies','Unused supplies are an asset; Store Supplies is not Selling Expenses.'],
       ['inventory','Inventory','Asset: unsold merchandise belongs on the balance sheet.'],
       ['supplies','Office Supplies','Asset until used; do not confuse supplies with Supplies Expense.'],
       ['dividends','Dividends','Distribution to stockholders, not an expense; excluded from net income.'],
