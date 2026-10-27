@@ -377,3 +377,61 @@ It does not launch a browser or verify rendered layout. Before merging, review
 at desktop and mobile widths (including 320px), in light/dark modes, and check
 keyboard focus and table scrolling in a real browser. Local preview uses the
 existing HTTP-server command; no build or production deployment is required.
+
+## Chapter 5 · Follow the Merchandise
+
+`/accounting-practice/chapter-5/` is a dependency-free module linked from the home
+page, accounting practice, and Chapter 4. Links use the current tab. No Worker
+routing or deployment settings changed.
+
+The user's Royal Furnishings screenshots establish the eleven-line multiple-step
+income statement: Sales, Cost of Goods Sold, Gross profit, Expenses heading,
+Selling Expenses, Administrative Expenses, Total expenses, Operating income,
+Other revenue and expense heading, Interest Expense, Net income (or loss).
+The statement-period label is also graded. Source balances include balance-sheet
+and dividend distractors, particularly Office Supplies versus an expense.
+
+The Harkins screenshot establishes the periodic COGS section, four left-column
+purchase components, right-column subtotals, estimated returns adjustment, gross
+profit follow-up, and periodic/perpetual comparison. Estimated returns are supplied
+at merchandise cost; Sales is an adjusted revenue balance. This matters: a refund
+liability at selling price must not be deducted directly from COGS.
+
+The screenshots show blank answer forms, not completed answer keys. This module
+explicitly teaches one signed presentation convention: Harkins deductions are
+negative; Royal operating expense balances are positive, with subtraction in the
+subtotal; Royal nonoperating Interest Expense is negative. Royal's single other
+item uses the right column. Confirm these presentation conventions against the
+professor's completed key during review. The accounting relationships and order
+are independent of that display choice. Practice companies and numbers are fresh
+variants rather than copies of the homework.
+
+Support levels progress from prefilled descriptions/classifications/columns and
+open explanations, to blank descriptions and classifications with amount columns
+and row-purpose cues supplied, to independent fields with optional hints. Source
+classifications remain active at every level. Every field checks immediately;
+Check all also flags blanks. Worked solutions are explicitly marked as supported
+and do not award completion. Work, support level and concept position persist in
+an isolated storage key; unavailable or malformed storage falls back safely.
+Changing worksheet modes starts a new answer sheet. Changing support levels keeps
+current answers; use Clear answers to attempt the same numbers independently.
+
+Secondary concept practice covers seller versus buyer entries, perpetual versus
+periodic accounts and timing, freight-in versus delivery expense, normal balances
+(including Customer Refunds Payable and Estimated Returns Inventory), and the
+advantage of multiple-step statements.
+
+Validation:
+
+```sh
+node --test tests/*.test.mjs
+python3 -m http.server 8765 --directory public
+# In another terminal, with Playwright installed as a developer-only dependency:
+node tests/chapter-5.browser.mjs
+```
+
+The browser script accepts `PLAYWRIGHT_MODULE`, `CHROMIUM_PATH`, and `TEST_URL`.
+The engine suite independently reconciles 2,000 seeds of each worksheet, including
+losses, signed deductions, and estimated returns. Browser checks complete both
+worksheets through the UI, exercise wrong answers, reload, reveal, resets,
+concepts, same-tab navigation, corrupt/blocked storage, and overflow at 390/320px.
